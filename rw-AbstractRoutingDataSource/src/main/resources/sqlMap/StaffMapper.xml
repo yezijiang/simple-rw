@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yaoyaohao.cerp.dao.system.StaffDao">
+	<resultMap type="Staff" id="staffResultMap">
+	  <id property="staffId" column="staff_id" />
+	  <result property="loginAccount" column="login_account"/>
+	  <result property="staffName" column="staff_name"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		staff_id,login_account,staff_name
+	</sql>
+	
+	<select id="selectByPrimaryKey" resultMap="staffResultMap">
+		select 
+		<include refid="Base_Column_List"/>
+		from t_sys_staff
+		where staff_id=#{id}
+	</select>
+	
+	<!-- 按参数条件录入信息，只选取字段值不为空的进行录入 -->
+	<insert id="insertSelective" parameterType="Staff" keyProperty="staffId" useGeneratedKeys="true">
+	    insert into t_sys_staff
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="staffId != null">
+				staff_id,
+			</if>
+			<if test="loginAccount != null">
+				login_account,
+			</if>
+			<if test="staffName != null">
+				staff_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="staffId != null">
+				#{staffId},
+			</if>
+			<if test="loginAccount != null">
+				#{loginAccount},
+			</if>
+			<if test="staffName != null">
+				#{staffName},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="Staff">
+		update t_sys_staff
+        <set>
+			<if test="staffName != null">
+				staff_name = #{staffName},
+			</if>
+        </set>
+        where staff_id = #{staffId}
+	</update>
+	
+	<delete id="deleteByPrimaryKey">
+		delete from t_sys_staff where staff_id = #{id}
+	</delete>
+</mapper>
