@@ -1,12 +1,11 @@
 package com.yaoyaohao.study.rw;
 
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.util.PatternMatchUtils;
 
 /**
  * 增加切面实现动态切数据源
@@ -20,21 +19,20 @@ import org.springframework.util.PatternMatchUtils;
 @Component
 @Order(-1)
 public class DataSourceAspect {
-	private final String[] READ_METHODS = {"query*","find*","select*"};
-	
-	@Pointcut("execution(* com.yaoyaohao.study.rw.service.*.*(..))")
+	@Pointcut("(execution(* com.yaoyaohao.study.rw.service.*.select*(..))) "
+			+ "|| (execution(* com.yaoyaohao.study.rw.service.*.find*(..)))"
+			+ "|| (execution(* com.yaoyaohao.study.rw.service.*.get*(..)))")
 	public void pointcut(){}
 	
-	@Before("pointcut()")
-	public void before(JoinPoint jp) {
-		String methodName = jp.getSignature().getName();
-		if(PatternMatchUtils.simpleMatch(READ_METHODS, methodName)) {
+	@Around("pointcut()")
+	public Object around(ProceedingJoinPoint pjp) throws Throwable{
 			DataSourceTypeHolder.set(DataSourceType.READ);
-			System.out.println("切换到读库");
-		}
-		else{
+			System.out.println("数据源切换到读库");
+			//
+			Object retVal = pjp.proceed();
+			//
 			DataSourceTypeHolder.reset();
-			System.out.println("切换到写库");
-		}
+			System.out.println("数据源切换重置");
+			return retVal;
 	}
 }
