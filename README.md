@@ -1,2 +1,4 @@
 # simple-rw
 简单的基于spring读写分离实现
+##rw-AbstractRoutingDataSource
+基于Spring AbstractRoutingDataSource与AOP技术实现数据源读写分离
