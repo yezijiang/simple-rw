@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yaoyaohao.cerp.dao.system.StaffDao">
+<mapper namespace="com.yaoyaohao.study.rw.dao.StaffDao">
 	<resultMap type="Staff" id="staffResultMap">
 	  <id property="staffId" column="staff_id" />
 	  <result property="loginAccount" column="login_account"/>

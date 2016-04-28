@@ -57,17 +57,21 @@
 	</bean>
 	
 	<!-- 读库 -->
-	<bean id="readDataSource1" parent="parentDataSource" init-method="init" destroy-method="close">
+	<bean id="readDataSource" parent="parentDataSource" init-method="init" destroy-method="close">
 		<!-- 基本属性 url、user、password -->
-		<property name="url" value="${read1.url}" />
-		<property name="username" value="${read1.user}" />
-		<property name="password" value="${read1.password}" />
+		<property name="url" value="${read.url}" />
+		<property name="username" value="${read.user}" />
+		<property name="password" value="${read.password}" />
 	</bean>
-	<bean id="readDataSource2" parent="parentDataSource" init-method="init" destroy-method="close">
-		<!-- 基本属性 url、user、password -->
-		<property name="url" value="${read2.url}" />
-		<property name="username" value="${read2.user}" />
-		<property name="password" value="${read2.password}" />
+	
+	<bean id="dataSource" class="com.yaoyaohao.study.rw.DynamicDataSource">
+		<property name="defaultTargetDataSource" ref="writeDataSource"/>
+		<property name="targetDataSources">
+			<map key-type="com.yaoyaohao.study.rw.DataSourceType">
+				<entry key="WRITE" value-ref="writeDataSource"/>
+				<entry key="READ" value-ref="readDataSource"/>
+			</map>
+		</property>
 	</bean>
 	
 	<!-- MyBatis配置 -->
@@ -81,4 +85,11 @@
 		<property name="basePackage" value="com.yaoyaohao.study.rw.dao" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
+	
+	<!-- 数据连接事务 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>
